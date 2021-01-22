@@ -34,13 +34,17 @@ class Block {
     return new Promise((resolve, reject) => {
       // Save in auxiliary variable the current block hash
       let storedHash = self.hash;
-      // Recalculate the hash of the Block
+      // Recalculate the hash of the Block. Make sure to remove hash as Block hash is calculated without hash saved.
+      self.hash = null;
       let blockHash = SHA256(JSON.stringify(self)).toString();
+      // Restore hash of block after hash generated
+      self.hash = storedHash;
       // Comparing if the hashes changed
-      let hashChanged = storedHash === blockHash;
+      let compareHash = storedHash === blockHash;
       // Returning the Block is not valid
       // Returning the Block is valid
-      hashChanged ? reject("Block is Not Valid") : resolve("Valid block");
+      console.log(storedHash, blockHash, compareHash);
+      compareHash ? resolve("Valid block") : reject("Block is Not Valid");
     });
   }
 

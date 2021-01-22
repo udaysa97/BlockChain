@@ -65,6 +65,12 @@ class Blockchain {
     let self = this;
     return new Promise(async (resolve, reject) => {
       try {
+        let chainIssues = await self.validateChain();
+        if (chainIssues !== null && chainIssues.length > 0) {
+          reject(
+            "Chain has issues. Please call ValidateChain endpoint to track them"
+          );
+        }
         if (self.height !== -1) {
           block.previousBlockHash = self.chain[self.chain.length - 1].hash;
         }
@@ -126,9 +132,8 @@ class Blockchain {
           throw "message not verifid";
         }
         //console.log("message verified" + verified);
-        star.address = address; // To help address based retreival later
-        let block = new BlockClass.Block(star);
-        self._addBlock(block);
+        let block = new BlockClass.Block({ star: star, owner: address });
+        await self._addBlock(block);
         resolve(block);
       } catch (error) {
         reject("Error while creating and adding block " + error);
@@ -184,11 +189,12 @@ class Blockchain {
     return new Promise((resolve, reject) => {
       self.chain.map((p) => {
         let currObj = JSON.parse(hex2ascii(p.body));
-        if (currObj.address === address) {
-          delete currObj.address;
+        console.log(currObj, address, currObj.owner);
+        if (currObj.owner === address) {
           stars.push(currObj);
         }
       });
+
       if (stars.length > 0) {
         resolve(stars);
       } else {
@@ -204,8 +210,8 @@ class Blockchain {
   validateChain() {
     let self = this;
     let errorLog = [];
-    return new Promise(async (resolve, reject) => {
-      self.chain.foreach(async (block) => {
+    return new Promise(async (resolve) => {
+      self.chain.map(async (block) => {
         try {
           let isBlockValid = await block.validate();
         } catch (error) {
@@ -220,6 +226,7 @@ class Blockchain {
           );
         }
       });
+      resolve(errorLog);
     });
   }
 }
