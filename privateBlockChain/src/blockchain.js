@@ -188,8 +188,7 @@ class Blockchain {
     let stars = [];
     return new Promise((resolve, reject) => {
       self.chain.map((p) => {
-        let currObj = JSON.parse(hex2ascii(p.body));
-        console.log(currObj, address, currObj.owner);
+        let currObj = await p.getBData();
         if (currObj.owner === address) {
           stars.push(currObj);
         }
