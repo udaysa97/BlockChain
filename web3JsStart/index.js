@@ -266,3 +266,7 @@ console.log(contract.methods);
 contract.methods.name().call((err, result) => {
   console.log(result);
 });
+
+contract.methods.totalSupply().call((err, result) => {
+  console.log(result);
+});
