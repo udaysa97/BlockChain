@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Deploy a Remix Contract</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+</head>
+
+<body>
+    <div> 
+        <h1>Ethereum Secret Messenger</h1>
+        <hr>
+
+        <label for="message">This site writes a secret message to the Ethereum
+            blockchain!</label>
+        <input id="userInput" type="text">
+
+        <button id="setMessageButton">Set secret message</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+      // Before everyhting make sure ganache is linked with metamask using custom RPC
+
+
+        // to let web3 be vailable in runCode() function
+        let GWeb3 = null;
+        // Added as web3 was not setting with metamask if inload not used.
+       window.addEventListener('load' ,() => {
+              if (typeof web3 !== 'undefined') {
+               GWeb3 = new Web3(web3.currentProvider);
+           } else {
+               GWeb3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/ac3cd14bf63847eb9ff1501da603ad26"));
+           }
+           runCode();
+       }) 
+
+     let runCode = async function(){ 
+          let web3 = GWeb3;
+           //console.log("gdgfdg" + web3.eth);
+        // getAccounts returns promise hence awaiting the response inside async func before returning 
+            let getCurrentAccount = async function(){
+                let ans = '';
+                await web3.eth.getAccounts().then(e => ans = e);
+                return ans[0];
+            }
+                
+        // Set a default account
+        //web3.eth.defaultAccount = web3.eth.accounts[0];
+        // if we dont await default account is assigned a promise and later gives error
+        web3.eth.defaultAccount = await getCurrentAccount();
+        // console.log(acc);
+        // console.log('resting');
+
+        // Get the contract address
+       var myMessage = new web3.eth.Contract([
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "x",
+                        "type": "string"
+                    }
+                ],
+                "name": "setMessage",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "getMessage",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ], '0x18514378c9f4909887B861F078Cab6e243216739'); // this addreess is picled from remix deployed contract 
+
+        //console.log(myMessage);
+
+        $("#setMessageButton").click(function () {
+            myMessage.methods.setMessage($("#userInput").val()).send({from: web3.eth.defaultAccount})//.then((r)=>console.log(r));
+            //console.log($("#userInput").val())
+        });
+    }
+
+    </script>
+</body>
+
+</html>
