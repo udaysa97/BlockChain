@@ -9,7 +9,7 @@ contract stringConcepts{
     
     string string1 = "testing";
     
-    function conversionTest() public pure returns(string){
+    function conversionTest() public pure returns(string memory){
         bytes memory string2 = "udacity"; //dynamic memory bytes type
         string memory converted = string(string2);
         return converted;
@@ -35,7 +35,7 @@ contract stringConcepts{
         // push will give error
     }
     
-    function stringExample() public pure returns(string){
+    function stringExample() public pure returns(string memory){
         string memory string3 = "abcde";
         return string3;
     }

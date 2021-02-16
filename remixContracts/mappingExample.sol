@@ -3,16 +3,16 @@ pragma solidity ^0.4.25;
 contract mappingExample{
     mapping(string => string) capitals;
     
-    function addCapital(string country, string capital) public {
+    function addCapital(string memory country, string memory capital) public {
         capitals[country] = capital;
         
     }
     
-    function getCapital(string _country) public view returns(string){
+    function getCapital(string memory _country) public view returns(string memory){
         return capitals[_country];
     }
     
-    function removeCapitals(string country) public{
+    function removeCapitals(string memory country) public{
         delete(capitals[country]);
     }
 }
