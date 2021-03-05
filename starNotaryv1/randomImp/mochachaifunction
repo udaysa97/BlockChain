@@ -1,0 +1,13 @@
+beforeEach (async () => {
+     library = await Library.deployed();
+      await contract ('Udacity', function(acc) {
+          accounts = acc;
+      })
+});
+
+describe ('all tests', () => {
+     it ('can create a Library owner', async () => {
+             const owner = await library.owner();
+             assert.equal(owner, accounts[0]);
+      })
+}) 
